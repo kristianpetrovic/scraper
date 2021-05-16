@@ -1,0 +1,42 @@
+version: "3"
+services: 
+
+    api-server:
+        image: api-server
+        ports:
+            - "3000:3000"
+        networks:
+            - scrapper-app
+        depends_on:
+            - postgres
+
+    vuejs-app:
+        image: vue-scrapper
+        stdin_open: true
+        ports:
+            - "8080:8080"
+        networks:
+            - scrapper-app
+        depends_on: 
+            - api-server
+
+    postgres:
+        image: postgres
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: scraper
+        volumes:
+            - pg-data:/pgdata
+        ports:
+            - "5432:5432"
+        networks:
+            - scrapper-app
+        
+
+networks:
+    scrapper-app:
+        driver: bridge
+volumes:
+    pg-data:
+        driver: local
